@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meu primeiro projeto</title>
+    <script>
+        function calcular() {
+            
+            document.getElementById("resultado").innerText = "Hello, world!";
+        }
+    </script>
+</head>
+<body>
+    <h1>Calculadora do Jacky</h1>
+    
+    <p>Insira uma operacao aritmetica:</p>
+    
+    <input type="text" id="operacao" placeholder="Exemplo: 2 + 2">
+    <button onclick="calcular()">Calcular</button>
+    
+    <h2>Resultado:</h2>
+    <p id="resultado"></p>
+</body>
+</html>
