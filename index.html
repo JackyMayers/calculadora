@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+
+<link rel="icon" href="https://i.postimg.cc/MG7qzW4x/emote.png" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Idade</title>
@@ -8,19 +10,20 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #121212;
-            color: white;
+            color: #fff;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            flex-direction: column;
         }
         .container {
-            background-color: #1e1e1e;
+            background-color: #1f1f1f;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
             text-align: center;
@@ -48,19 +51,40 @@
             border: 1px solid #007bff;
             display: none;
         }
-        input {
+
+        /* Estilos para o rodapé */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            background-color: #1f1f1f;
+            padding: 15px;
             color: #fff;
-            background-color: #333;
-            border: 1px solid #555;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        }
+        footer img {
+            width: 50px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        footer p {
+            margin: 0;
+        }
+        footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Calculadora de Idade</h1>
-        <label for="data-nascimento">Data de Nascimento (ddmmaaaa):</label>
-        <input type="text" id="data-nascimento" placeholder="Exemplo: 02022009" oninput="formatarData()">
-        <p id="data-formatada" style="color: #ccc;">Formato: 02/02/2009</p>
+        <label for="data-nascimento">Data de Nascimento (dd/mm/aaaa):</label>
+        <input type="text" id="data-nascimento" placeholder="Exemplo: 01/02/2008" oninput="formataData()">
         <button onclick="calcularIdade()">Calcular</button>
         <div class="result" id="resultado">
             <p id="idade"></p>
@@ -70,18 +94,19 @@
         </div>
     </div>
 
+    <footer>
+        <img src="https://i.postimg.cc/WzSNyqxY/Jacky-Confuso.png" alt="Placeholder Image">
+        <p>Direitos Reservados © 2024 <a href="https://jackymayers.github.io/" target="_blank">Jacky Mayers</a>.</p>
+    </footer>
+
     <script>
-        // Função para formatar a data à medida que o usuário digita
-        function formatarData() {
-            var input = document.getElementById('data-nascimento').value;
-            input = input.replace(/\D/g, ''); // Remove qualquer coisa que não seja número
-            if (input.length >= 3) {
-                input = input.slice(0, 2) + '/' + input.slice(2); // Adiciona o separador '/'
+        function formataData() {
+            var dataNascimento = document.getElementById('data-nascimento').value;
+            // Adiciona barra conforme o usuário digita
+            if (dataNascimento.length === 2 || dataNascimento.length === 5) {
+                dataNascimento += '/';
             }
-            if (input.length >= 6) {
-                input = input.slice(0, 5) + '/' + input.slice(5); // Adiciona o separador '/'
-            }
-            document.getElementById('data-nascimento').value = input;
+            document.getElementById('data-nascimento').value = dataNascimento;
         }
 
         function calcularIdade() {
@@ -132,7 +157,11 @@
             }
             var diffUltimoAniversario = hoje - ultimoAniversario;
             var diasDesdeUltimoAniversario = Math.floor(diffUltimoAniversario / (1000 * 3600 * 24));
-            document.getElementById('ultimo-aniversario').innerText = "Fez aniversário há " + diasDesdeUltimoAniversario + " dias.";
+            if (diasDesdeUltimoAniversario === 0) {
+                document.getElementById('ultimo-aniversario').innerText = "Aniversário hoje!";
+            } else {
+                document.getElementById('ultimo-aniversario').innerText = "Fez aniversário há " + diasDesdeUltimoAniversario + " dias.";
+            }
 
             // Exibe o próximo aniversário
             if (diasRestantes === 1) {
