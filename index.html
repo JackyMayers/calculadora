@@ -1,23 +1,154 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-    <title>Meu primeiro projeto</title>
-    <script>
-        function calcular() {
-            
-            document.getElementById("resultado").innerText = "Hello, world!";
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Idade</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-    </script>
+        .container {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            background-color: #333;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            border: 1px solid #007bff;
+            display: none;
+        }
+        input {
+            color: #fff;
+            background-color: #333;
+            border: 1px solid #555;
+        }
+    </style>
 </head>
 <body>
-    <h1>Calculadora do Jacky</h1>
-    
-    <p>Insira uma operacao aritmetica:</p>
-    
-    <input type="text" id="operacao" placeholder="Exemplo: 2 + 2">
-    <button onclick="calcular()">Calcular</button>
-    
-    <h2>Resultado:</h2>
-    <p id="resultado"></p>
+    <div class="container">
+        <h1>Calculadora de Idade</h1>
+        <label for="data-nascimento">Data de Nascimento (ddmmaaaa):</label>
+        <input type="text" id="data-nascimento" placeholder="Exemplo: 02022009" oninput="formatarData()">
+        <p id="data-formatada" style="color: #ccc;">Formato: 02/02/2009</p>
+        <button onclick="calcularIdade()">Calcular</button>
+        <div class="result" id="resultado">
+            <p id="idade"></p>
+            <p id="ultimo-aniversario"></p>
+            <p id="prox-aniversario"></p>
+            <p id="proxima-idade"></p>
+        </div>
+    </div>
+
+    <script>
+        // Função para formatar a data à medida que o usuário digita
+        function formatarData() {
+            var input = document.getElementById('data-nascimento').value;
+            input = input.replace(/\D/g, ''); // Remove qualquer coisa que não seja número
+            if (input.length >= 3) {
+                input = input.slice(0, 2) + '/' + input.slice(2); // Adiciona o separador '/'
+            }
+            if (input.length >= 6) {
+                input = input.slice(0, 5) + '/' + input.slice(5); // Adiciona o separador '/'
+            }
+            document.getElementById('data-nascimento').value = input;
+        }
+
+        function calcularIdade() {
+            // Pega a data de nascimento inserida
+            var dataNascimento = document.getElementById('data-nascimento').value;
+
+            // Valida se a data está no formato correto
+            var regex = /^(0[1-9]|1[0-9]|2[0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+            if (!regex.test(dataNascimento)) {
+                alert('Por favor, insira a data no formato correto (dd/mm/aaaa)');
+                return;
+            }
+
+            // Converte a data de nascimento para um objeto Date
+            var partesData = dataNascimento.split('/');
+            var dia = parseInt(partesData[0]);
+            var mes = parseInt(partesData[1]) - 1; // Meses começam do 0 no objeto Date
+            var ano = parseInt(partesData[2]);
+            var nascimento = new Date(ano, mes, dia);
+
+            var hoje = new Date();
+            var idadeAtual = hoje.getFullYear() - nascimento.getFullYear();
+            var mesAtual = hoje.getMonth();
+            var diaAtual = hoje.getDate();
+
+            // Se a data de aniversário ainda não ocorreu este ano, subtrai um ano da idade
+            if (mesAtual < mes || (mesAtual === mes && diaAtual < dia)) {
+                idadeAtual--;
+            }
+
+            // Calcula a data do próximo aniversário
+            var proxAniversario = new Date(hoje.getFullYear(), mes, dia);
+            if (proxAniversario < hoje) {
+                proxAniversario.setFullYear(hoje.getFullYear() + 1);
+            }
+
+            // Calcula o número de dias restantes para o próximo aniversário
+            var diffTempo = proxAniversario - hoje;
+            var diasRestantes = Math.ceil(diffTempo / (1000 * 3600 * 24));
+
+            // Exibe a idade atual
+            document.getElementById('idade').innerText = "Idade atual: " + idadeAtual + " anos";
+
+            // Exibe o tempo desde o último aniversário
+            var ultimoAniversario = new Date(hoje.getFullYear(), mes, dia);
+            if (ultimoAniversario > hoje) {
+                ultimoAniversario.setFullYear(hoje.getFullYear() - 1);
+            }
+            var diffUltimoAniversario = hoje - ultimoAniversario;
+            var diasDesdeUltimoAniversario = Math.floor(diffUltimoAniversario / (1000 * 3600 * 24));
+            document.getElementById('ultimo-aniversario').innerText = "Fez aniversário há " + diasDesdeUltimoAniversario + " dias.";
+
+            // Exibe o próximo aniversário
+            if (diasRestantes === 1) {
+                document.getElementById('prox-aniversario').innerText = "Seu aniversário é amanhã!";
+            } else if (diasRestantes === 0) {
+                document.getElementById('prox-aniversario').innerText = "Hoje é seu aniversário!";
+            } else {
+                document.getElementById('prox-aniversario').innerText = "Faltam " + diasRestantes + " dias para o seu próximo aniversário.";
+            }
+
+            // Exibe a próxima idade
+            document.getElementById('proxima-idade').innerText = "No próximo aniversário, você fará " + (idadeAtual + 1) + " anos.";
+
+            // Mostra o resultado
+            document.getElementById('resultado').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
